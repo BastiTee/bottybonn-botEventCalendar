@@ -1,0 +1,85 @@
+{
+  "success": true,
+  "items": [{
+      "id": "40729",
+      "title": "Deutscher Musikwettbewerb 2018",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=40729",
+      "description": "",
+      "dateFrom": "1520290800",
+      "dateTo": "1520636400"
+    },
+    {
+      "id": "41313",
+      "title": "Workshopseminar: Die Türkei als entwicklungspolitischer Partner für Frieden und Entwicklung",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=41313",
+      "description": "",
+      "dateFrom": "1520463600",
+      "dateTo": "1520636400"
+    },
+    {
+      "id": "40165",
+      "title": "VIS MOTRIX",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=40165",
+      "description": "",
+      "dateFrom": "1520463600",
+      "dateTo": "1520636400"
+    },
+    {
+      "id": "39710",
+      "title": "Fremde Verwandte",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=39710",
+      "description": "",
+      "dateFrom": "1520290800",
+      "dateTo": "1520636400"
+    },
+    {
+      "id": "36098",
+      "title": "BESTANDSAUFNAHME GURLITT",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=36098",
+      "description": "",
+      "dateFrom": "1509663600",
+      "dateTo": "1520722800"
+    },
+    {
+      "id": "36841",
+      "title": "Im Meer versunken Sizilien und die Unterwasserarchäologie",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=36841",
+      "description": "",
+      "dateFrom": "1507759200",
+      "dateTo": "1520722800"
+    },
+    {
+      "id": "40541",
+      "title": "Flüchtlingsgespräche von Bertolt Brecht",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=40541",
+      "description": "",
+      "dateFrom": "1519945200",
+      "dateTo": "1520895600"
+    },
+    {
+      "id": "39604",
+      "title": "Tapping on Windows, knocking on Walls | Wim Bosch (Groningen)",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=39604",
+      "description": "",
+      "dateFrom": "1516230000",
+      "dateTo": "1521068400"
+    },
+    {
+      "id": "40403",
+      "title": "Deutscher Musikwettbewerb",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=40403",
+      "description": "",
+      "dateFrom": "1520204400",
+      "dateTo": "1521068400"
+    },
+    {
+      "id": "37829",
+      "title": "Besiedlung der Abwesenheit - Werke von Dieter Rübsaamen",
+      "link": "http://www.bonn.de/tourismus_kultur_sport_freizeit/veranstaltungskalender/detail/?vid=37829",
+      "description": "",
+      "dateFrom": "1506722400",
+      "dateTo": "1521068400"
+    }
+  ],
+  "count": 33
+}

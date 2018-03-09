@@ -1,43 +1,61 @@
-var config = null;
-try {
-  config = require("platformsh").config();
-} catch (e) {
-  config = {
-    "variables": require('dotenv').config()
-  };
-}
-var format = require("string-template");
-var shared = require('../../modules/sharedFunctions');
-var when = require('when');
-var rp = require('request-promise');
+'use strict;'
 
-var botName = 'botEventCalendarBonn';
-var botRoute = '/' + botName;
+const shared = require('../../modules/sharedFunctions');
+const dotenv = require('dotenv').config();
+const format = require('string-template');
+const when = require('when');
+const rpromise = require('request-promise');
 
-var location = 'Bonn';
-var serviceURL = 'http://www.bonn.de/tools/mobil/api.json.php';
-var overviewQuery = 'mod=veranstaltungen';
+const botName = 'botEventCalendarBonn';
+const location = 'Bonn';
+const serviceURL = 'http://www.bonn.de/tools/mobil/api.json.php';
+const overviewQuery = 'mod=veranstaltungen';
+const config = {
+  'variables': dotenv
+};
+const NO_SERVICE_REQUEST = true;
 
-var botDialog = [
+const botDialog = [
   function(session, args, next) {
     console.log('========================================================');
     console.log('= BOT EVENT CALENDAR BONN');
     console.log('========================================================');
-    console.log('>>> ARGS: ' + args);
-    calendarRequest().then(
-      function(calendarResult) {
-        var answerText = generateAnswerText(calendarResult);
-        session.trans(answerText).then(function(responseTranslated) {
-          var answerJson = generateAnswerJson(session, calendarResult, responseTranslated);
-          answerJson = session.toMessage(answerJson);
-          session.endDialog(answerJson);
-        });
+    let context = getMessageContext(session);
+    calendarRequest(context).then(
+      function(serviceResponse) {
+        context.serviceResponse = serviceResponse;
+        generateAnswerText(context);
+        session.trans(context.answerText).then(
+          function(answerTextTranslated) {
+            context.answerText = answerTextTranslated;
+            generateAnswerJson(context);
+            answerJson = session.toMessage(context.answerJson);
+            session.endDialog(answerJson);
+          });
       });
   }
 ];
 
-function calendarRequest() {
-  var overviewPromise = rp({
+const getMessageContext = function(session) {
+  console.log(session.message);
+  console.log('========================================================');
+  // TODO: Obtain structured information from message
+  return {
+    session: session,
+    message: session.message,
+  }
+}
+
+const calendarRequest = function(context) {
+
+  if (NO_SERVICE_REQUEST) {
+    return when.join(function() {}).then(function(values) {
+      return require('./example-response.json');
+    });
+    return;
+  }
+
+  var overviewPromise = rpromise({
     uri: serviceURL + '?' + overviewQuery,
     json: true
   });
@@ -48,32 +66,36 @@ function calendarRequest() {
   });
 }
 
-function generateAnswerText(calendarResult) {
-  var answerTextRaw = resolveAnswers[shared.randomWithRange(0, resolveAnswers.length)];
-
-  var value = calendarResult.items[0].title;
-
-  answerText = format(answerTextRaw, {
-    location: location,
-    value: value
-  });
-
-  return answerText;
+const generateAnswerText = function(context) {
+  // TODO Bot could pick up structured info and design a nicer output
+  context.answerText = 'Hier sind Veranstaltungen, die dich interessieren könnten.';
 }
 
-function generateAnswerJson(session, calendarResult, answerText) {
-  return JSON.stringify({
-    "botname": botName,
-    "type": "pegelstand",
-    "data": calendarResult,
-    "text": answerText,
-    "language": session.userData.language,
-    "location": location
+const convertServiceResponseItem = function(item) {
+  let title = item.title;
+  let href = decodeURIComponent(item.link);
+  return {
+    'title': title,
+    'href': href,
+  }
+}
+
+const generateAnswerJson = function(context) {
+  let data = [];
+  let items = context.serviceResponse.items;
+  for (let i = 0; i < items.length && i < 10; i++) {
+    data.push(convertServiceResponseItem(items[i]))
+  };
+
+  context.answerJson = JSON.stringify({
+    'botname': botName,
+    'type': 'link_list',
+    'data': data,
+    'text': context.answerText,
+    'language': context.session.userData.language,
+    'location': location
   });
 }
 
-var resolveAnswers = [
-  'In {location} ist heute "{value}".',
-];
 
 module.exports = botDialog;
