@@ -6,88 +6,74 @@ try {
     "variables": require('dotenv').config()
   };
 }
-
 var format = require("string-template");
 var shared = require('../../modules/sharedFunctions');
-var rp = require('request-promise');
 var when = require('when');
-var botName = 'botPegelstandBonn';
+var rp = require('request-promise');
+
+var botName = 'botEventCalendarBonn';
 var botRoute = '/' + botName;
 
-var station = 'Bonn';
-var serviceURL = 'http://www.pegelonline.wsv.de/webservices/rest-api/v2/';
-var overviewQuery = 'stations/' + station + '/W.json?includeCurrentMeasurement=true&includeCharacteristicValues=true';
-var historyQuery = 'stations/' + station + '/W/measurements.json?start=P1DT1H';
+var location = 'Bonn';
+var serviceURL = 'http://www.bonn.de/tools/mobil/api.json.php';
+var overviewQuery = 'mod=veranstaltungen';
 
 var botDialog = [
   function(session, args, next) {
-    pegelonlineRequest().then(function(pegelonlineResult) {
-      var answerText = generateAnswerText(pegelonlineResult);
-      session.trans(answerText).then(function(responseTranslated) {
-        var answerJson = generateAnswerJson(session, pegelonlineResult, responseTranslated);
-        answerJson = session.toMessage(answerJson);
-        session.endDialog(answerJson);
+    console.log('========================================================');
+    console.log('= BOT EVENT CALENDAR BONN');
+    console.log('========================================================');
+    console.log('>>> ARGS: ' + args);
+    calendarRequest().then(
+      function(calendarResult) {
+        var answerText = generateAnswerText(calendarResult);
+        session.trans(answerText).then(function(responseTranslated) {
+          var answerJson = generateAnswerJson(session, calendarResult, responseTranslated);
+          answerJson = session.toMessage(answerJson);
+          session.endDialog(answerJson);
+        });
       });
-    });
   }
 ];
 
-function pegelonlineRequest() {
-  //requestOverview
+function calendarRequest() {
   var overviewPromise = rp({
-    uri: serviceURL + overviewQuery,
+    uri: serviceURL + '?' + overviewQuery,
     json: true
   });
 
-  //requestHistory
-  var historyPromise = rp({
-    uri: serviceURL + historyQuery,
-    json: true
-  });
-
-  return when.join(overviewPromise, historyPromise).then(function(values) {
+  return when.join(overviewPromise).then(function(values) {
     var result = values[0];
-    var history = values[1];
-
-    result.history = [];
-    for (var i = 0; history.length > i; i++) {
-      if (i % 24 == 0) {
-        result.history.push(history[i]);
-      }
-    }
     return result;
   });
 }
 
-function generateAnswerText(pegelonlineResult) {
+function generateAnswerText(calendarResult) {
   var answerTextRaw = resolveAnswers[shared.randomWithRange(0, resolveAnswers.length)];
-  var value = pegelonlineResult.currentMeasurement.value;
-  var unit = pegelonlineResult.unit;
+
+  var value = calendarResult.items[0].title;
 
   answerText = format(answerTextRaw, {
-    station: station,
-    value: value,
-    unit: unit
+    location: location,
+    value: value
   });
 
   return answerText;
 }
 
-function generateAnswerJson(session, pegelonlineResult, answerText) {
+function generateAnswerJson(session, calendarResult, answerText) {
   return JSON.stringify({
     "botname": botName,
     "type": "pegelstand",
-    "data": pegelonlineResult,
+    "data": calendarResult,
     "text": answerText,
     "language": session.userData.language,
-    "location": station
+    "location": location
   });
 }
 
 var resolveAnswers = [
-  'Blabla {station} {value}{unit}.',
-  'Blabla {station} Blabla{value}{unit}.',
-  'Blabla {station} Blabla {value}{unit}.'
+  'In {location} ist heute "{value}".',
 ];
 
 module.exports = botDialog;
