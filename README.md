@@ -4,6 +4,9 @@
 
 ## Notes
 
-- Is it possible to get structured information/entities from request message?
-- How is the bot invoked in the end? Keyword?
-- Feedback loops? If I send a link list, can I fetch a link that has been clicked and postprocess that?
+- Ist es möglich, die eingehende Nachricht bereits strukturiert zu bekommen. Das `session.message` Objekt enthält schon ein `entity`-Attribute, das aber nie befüllt ist.
+- Wie wird der Bot am Ende angestoßen?
+  - Gibt es ein "Wake-Word"?
+  - Kann ich als Bot-Entwickler beeinflussen, wie mein Bot angestoßen wird?
+  - Wie modelliert man sowas wie: "Was ist heute in Bonn los?" zu "Event Bot ansprechen"?
+- Gibt es Feedbackschleifen für Linklisten?
